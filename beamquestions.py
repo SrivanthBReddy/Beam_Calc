@@ -11,23 +11,23 @@ elif beam_type.lower() == "custom":
     youngs_modulus = float(input("Enter Young's Modulus in Pascals: "))
     yield_strength = float(input("Enter Yield Strength in Pascals: "))
     density = float(input("Enter Density in kg/m^3: "))
-    beaminfo = beamcalc.beam(material=name, youngs_modulus=youngs_modulus, yeild_strength=yield_strength, density=density)
+    beaminfo = beamcalc.beam(material=name, youngs_modulus=youngs_modulus, yield_strength=yield_strength, density=density)
     beamlength = float(input("What is the length of your beam in meters? "))
 else:
     raise ValueError("Invalid beam type. Please enter 'Preset' or 'Custom'.")
 
-supports = int(input("How many supports?"))
+supports = int(input("How many supports? "))
 if supports > 0:
     supports_list = [None]*supports
     for i in range(supports):
-        support_type = input(f"Enter the type of support {i+1}: ")
+        support_type = input(f"Enter the type of support (Pin, Roller, or Fixed) {i+1}: ")
         distance = float(input(f"Enter the distance of support {i+1} from the left support: "))
         support = beamcalc.SupportObj(support_type, distance)
         supports_list[i] = support
 else:
     raise ValueError("Invalid number of supports. Must be greater than 0.")
 
-numinputs = input("input point, distributed, both, or none: ")
+numinputs = input("What type of loads? (point, distributed, both, or none): ")
 numpinputs = numinputs.lower()
 
 #Optional Input for point loads
