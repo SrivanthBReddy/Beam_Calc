@@ -29,9 +29,8 @@ else:
 
 numinputs = input("What type of loads? (point, distributed, both, or none): ").lower()
 
-#Optional Input for point loads
-if numinputs == "none":
-    finalbeam = beamobjects.BeamFinalPlain(beam=beaminfo, length=beamlength, supports=supports_list)   
+#Optional Input for point loads 
+point_loads_list = [] # Initialize the point_loads_list to an empty list
 if numinputs == "point" or numinputs == "both":
     loads = int(input("How many point loads? "))
     if loads > 0:
@@ -42,14 +41,15 @@ if numinputs == "point" or numinputs == "both":
             point_load_direction = input(f"Enter the direction of load {i+1} (up or down): ")
             point_load = beamobjects.PointLoad(force, distance, point_load_direction)  
             point_loads_list[i] = point_load
-        if numinputs == "point":
-            finalbeam = beamobjects.BeamFinalPoint(beam=beaminfo, length=beamlength, supports=supports_list, point_loads=point_loads_list)
     else :
         raise ValueError("Invalid number of point loads. Must be greater than 0.")
+elif numinputs == "distributed" or numinputs == "none":
+    pass #This will be handled in the next section   
 else:
-    raise ValueError("Invalid load type. Must be 'point' or 'both'.")
+    raise ValueError("Invalid load type. Must be 'point', 'distributed', 'none', or 'both'.")
         
 #Optional input for distributed loads
+distributed_loads_list = [] # Initialize the distributed_loads_list to an empty list
 if numinputs == "distributed" or numinputs == "both":
     distributed_loads = int(input("How many distributed loads? "))
     if distributed_loads > 0:
@@ -62,12 +62,9 @@ if numinputs == "distributed" or numinputs == "both":
             distributed_load_direction = input(f"Enter the direction of distributed load {i+1} (up or down): ")
             distributed_load = beamobjects.DistributedLoad(load_type, load_value, x_initial, x_final, distributed_load_direction)
             distributed_loads_list[i] = distributed_load
-        if numinputs == "distributed":
-            finalbeam = beamobjects.BeamFinalDistributed(beam=beaminfo, length=beamlength, supports=supports_list, distributed_loads=distributed_loads_list)
     else:
         raise ValueError("Invalid number of distributed loads. Must be greater than 0.")
-else:
-    raise ValueError("Invalid load type. Must be 'distributed' or 'both'.")
-if numinputs == "both":
-    finalbeam = beamobjects.BeamFinalBoth(beam=beaminfo, length=beamlength, supports=supports_list, point_loads=point_loads_list, distributed_loads=distributed_loads_list)
-    
+elif numinputs == 'none':
+    pass
+
+finalbeam = beamobjects.BeamFinal(beam=beaminfo, length=beamlength, supports=supports_list, point_loads=point_loads_list, distributed_loads=distributed_loads_list)

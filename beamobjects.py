@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
+from dataclasses import field
 
 #Wood
 class Wood(Enum):
@@ -73,32 +74,14 @@ class DistributedLoad:
     direction: str
 
 @dataclass
-class BeamFinalPlain:
+class BeamFinal:
     beam: beam
     length: float
     supports: list[SupportObj]
+    point_loads: list[PointLoad] = field(default_factory=list)
+    distributed_loads: list[DistributedLoad] = field(default_factory=list)
 
-@dataclass
-class BeamFinalPoint:
-    beam: beam
-    length: float
-    supports: list[SupportObj]
-    point_loads: list[PointLoad]
 
-@dataclass
-class BeamFinalDistributed:
-    beam: beam
-    length: float
-    supports: list[SupportObj]
-    distributed_loads: list[DistributedLoad]
-
-@dataclass
-class BeamFinalBoth:
-    beam: beam
-    length: float
-    supports: list[SupportObj]
-    point_loads: list[PointLoad]
-    distributed_loads: list[DistributedLoad]
 
 
 #Preset or Custom
