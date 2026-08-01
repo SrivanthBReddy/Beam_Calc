@@ -27,28 +27,28 @@ class Support(Enum):
     
 #custom
 class beam:
-    def __init__(self, material : str =None,youngs_modulus: float = None, yeild_strength: float = None, density: float = None):
-        if material is not None and youngs_modulus is not None and yeild_strength is not None and density is not None:
+    def __init__(self, material : str =None,youngs_modulus: float = None, yield_strength: float = None, density: float = None):
+        if material is not None and youngs_modulus is not None and yield_strength is not None and density is not None:
             self.material = material
             self.youngs_modulus = youngs_modulus
-            self.yeild_strength = yeild_strength
+            self.yield_strength = yield_strength
             self.density = density
-        elif material is None and youngs_modulus is not None and yeild_strength is not None and density is not None:
+        elif material is None and youngs_modulus is not None and yield_strength is not None and density is not None:
             self.material = "Material"
             self.youngs_modulus = youngs_modulus
-            self.yeild_strength = yeild_strength
+            self.yield_strength = yield_strength
             self.density = density
         elif str.lower(material) == "wood":
             self.youngs_modulus = Wood.YOUNGMODULE.value
-            self.yeild_strength = Wood.YEILDSTRENGTH.value
+            self.yield_strength = Wood.YEILDSTRENGTH.value
             self.density = Wood.DENSITY.value
         elif str.lower(material) == "concrete":
             self.youngs_modulus = Concrete.YOUNGMODULE.value
-            self.yeild_strength = Concrete.YEILDSTRENGTH.value
+            self.yield_strength = Concrete.YEILDSTRENGTH.value
             self.density = Concrete.DENSITY.value
         elif str.lower(material) == "steel":
             self.youngs_modulus = Steel.YOUNGMODULE.value
-            self.yeild_strength = Steel.YEILDSTRENGTH.value
+            self.yield_strength = Steel.YEILDSTRENGTH.value
             self.density = Steel.DENSITY.value
         else : 
             raise ValueError("Invalid material or missing properties for custom beam. Must be in the order of Mateerial Name, Youngs Moduls, Yeild Strenght, and Density")
