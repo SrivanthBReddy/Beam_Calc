@@ -20,7 +20,7 @@ supports = int(input("How many supports? "))
 if supports > 0:
     supports_list = [None]*supports
     for i in range(supports):
-        support_type = input(f"Enter the type of support (Pin, Roller, or Fixed) {i+1}: ")
+        support_type = input(f"Enter the type of support (Pin, Roller, or Fixed) {i+1}: ").upper()
         distance = float(input(f"Enter the distance of support {i+1} from the left support: "))
         support = beamobjects.SupportObj(support_type, distance)
         supports_list[i] = support
