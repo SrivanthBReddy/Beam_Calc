@@ -28,7 +28,7 @@ class Support(Enum):
     
 #custom
 class beam:
-    def __init__(self, material : str =None,youngs_modulus: float = None, yield_strength: float = None, density: float = None):
+    def __init__(self, material : str = None,youngs_modulus: float = None, yield_strength: float = None, density: float = None):
         if material is not None and youngs_modulus is not None and yield_strength is not None and density is not None:
             self.material = material
             self.youngs_modulus = youngs_modulus
@@ -80,6 +80,7 @@ class BeamFinal:
     supports: list[SupportObj]
     point_loads: list[PointLoad] = field(default_factory=list)
     distributed_loads: list[DistributedLoad] = field(default_factory=list)
+    Moment_of_Intertia: float = float
 
 
 
