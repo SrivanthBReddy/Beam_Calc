@@ -40,14 +40,17 @@ class beam:
             self.yield_strength = yield_strength
             self.density = density
         elif str.lower(material) == "wood":
+            self.material = "Wood"
             self.youngs_modulus = Wood.YOUNGMODULE.value
             self.yield_strength = Wood.YEILDSTRENGTH.value
             self.density = Wood.DENSITY.value
         elif str.lower(material) == "concrete":
+            self.material = "Concrete"
             self.youngs_modulus = Concrete.YOUNGMODULE.value
             self.yield_strength = Concrete.YEILDSTRENGTH.value
             self.density = Concrete.DENSITY.value
         elif str.lower(material) == "steel":
+            self.material = "Steel"
             self.youngs_modulus = Steel.YOUNGMODULE.value
             self.yield_strength = Steel.YEILDSTRENGTH.value
             self.density = Steel.DENSITY.value
@@ -81,6 +84,7 @@ class BeamFinal:
     point_loads: list[PointLoad] = field(default_factory=list)
     distributed_loads: list[DistributedLoad] = field(default_factory=list)
     Moment_of_Intertia: float = float
+    cross_area: float = float
 
 
 

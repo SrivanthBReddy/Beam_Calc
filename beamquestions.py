@@ -28,18 +28,21 @@ if supports > 0:
 else:
     raise ValueError("Invalid number of supports. Must be greater than 0.")
 
-moment_of_intertia = float(input("Enter the Moment of Intertia of the beam in m^4: "))
-if moment_of_intertia is None:
-    print("The default value for moment of intertia is 1e-4 m^4.")
+moment_of_intertia = input("Enter the Moment of Intertia of the beam in m^4: ")
+if moment_of_intertia == "":
+    print("The default value for moment of intertia is 83e-3 m^4.")
     moment_of_intertia = 83e-3 #m^4 default value is b = 1m and h = 1m for a rectangular beam
-elif moment_of_intertia <= 0:
+elif float(moment_of_intertia) <= 0:
     raise ValueError("Invalid Moment of Inertia. Must be greater than 0.")
+else:
+    moment_of_intertia = float(moment_of_intertia)
+cross_area = float(input("Enter the cross-sectional area of the beam in m^2: "))
 
 point_loads_list = []  # Initialize the point_loads_list to an empty list
 WeightofBeam = input("Is the weight of the beam negligible? Yes or No: ").lower()
 if WeightofBeam == "no":
     if material in ["wood", "concrete", "steel"]:
-        weight = beaminfo.density * 9.81 * beamlength
+        weight = beaminfo.density * 9.81 * beamlength * cross_area
         weight_distance = beamlength / 2
         weight_load = beamobjects.PointLoad(weight, weight_distance, "down")
         point_loads_list.append(weight_load)
@@ -99,4 +102,4 @@ if numinputs == "distributed" or numinputs == "both":
 elif numinputs == 'none':
     pass
 
-finalbeam = beamobjects.BeamFinal(beam=beaminfo, length=beamlength, Moment_of_Intertia = moment_of_intertia, supports=supports_list, point_loads=point_loads_list, distributed_loads=distributed_loads_list)
+finalbeam = beamobjects.BeamFinal(beam=beaminfo, length=beamlength, Moment_of_Intertia = moment_of_intertia, cross_area = cross_area,supports=supports_list, point_loads=point_loads_list, distributed_loads=distributed_loads_list)

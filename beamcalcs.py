@@ -9,11 +9,11 @@ I = 1*10**-4 #m^4
 L = 7 #m
 P = -1000 #N
 
-E = finalbeam.beam.youngs_modulus
-I = finalbeam.Moment_of_Intertia
-L = finalbeam.length
-S = finalbeam.supports
-P = finalbeam.point_loads
+E = finalbeam.beam.youngs_modulus # Youngs modulus of the beam in Pascals
+I = finalbeam.Moment_of_Intertia # Moment of Inertia of the beam in m^4
+L = finalbeam.length # Length of the beam in meters
+S = finalbeam.supports # List of supports
+P = finalbeam.point_loads # List of point loads
 
 stiffmatrix = ((E*I)/L**3) * np.array([[12, 6*L, -12, 6*L], 
                                        [6*L, 4*L**2, -6*L, 2*L**2], 
