@@ -56,19 +56,25 @@ numinputs = input("What type of loads? (point, distributed, both, or none): ").l
 #Optional Input for point loads 
 if numinputs == "point" or numinputs == "both":
     loads = int(input("How many point loads? "))
-    if loads > 0 and WeightofBeam == "yes":
-        point_loads_list = [None]*loads
-    elif loads > 0 and WeightofBeam == "no":
-        point_loads_list = [None]*(loads + 1)  # Add one for the weight of the beam
-        point_loads_list[0] = weight_load  # Add the weight of the beam
+    if loads > 0:
+        if WeightofBeam == "yes":
+            point_loads_list = [None]*loads
+        elif WeightofBeam == "no":
+            point_loads_list = [None]*(loads + 1)  # Add one for the weight of the beam
+            point_loads_list[loads] = weight_load #account for the weight of the beam in the loop below
         for i in range(loads):
             force = float(input(f"Enter the force of load {i+1} in Newtons: "))
             distance = float(input(f"Enter the distance of load {i+1} from the left support in meters: "))
             point_load_direction = input(f"Enter the direction of load {i+1} (up or down): ")
             point_load = beamobjects.PointLoad(force, distance, point_load_direction)  
             point_loads_list[i] = point_load
-    else :
-        raise ValueError("Invalid number of point loads. Must be greater than 0.")
+    elif loads == 0:
+        if WeightofBeam == "no":
+            pass # If the weight of the beam is already accounted for, do nothing
+        else:
+            raise ValueError("Invalid number of point loads. Must be greater than or equal to 0.")
+    else:
+        raise ValueError("Invalid number of point loads. Must be greater than or equal to 0.")
 elif numinputs == "distributed" or numinputs == "none":
     pass #This will be handled in the next section   
 else:
@@ -79,6 +85,7 @@ distributed_loads_list = [] # Initialize the distributed_loads_list to an empty 
 if numinputs == "distributed" or numinputs == "both":
     distributed_loads = int(input("How many distributed loads? "))
     if distributed_loads > 0:
+        distributed_loads_list = [None]*distributed_loads
         for i in range(distributed_loads):
             load_type = input(f"Enter the type of distributed load {i+1} (rectangular, triangular bottom to top, triangular top to bottom): ")
             load_value = float(input(f"Enter the load value of distributed load {i+1} in N/m(if triangular state the largest value of load): "))

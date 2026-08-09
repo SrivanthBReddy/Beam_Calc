@@ -10,7 +10,7 @@ L = 7 #m
 P = -1000 #N
 
 E = finalbeam.beam.youngs_modulus
-I = finalbeam.Moment_of_intertia
+I = finalbeam.Moment_of_Intertia
 L = finalbeam.length
 S = finalbeam.supports
 P = finalbeam.point_loads
