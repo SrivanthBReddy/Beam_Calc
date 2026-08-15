@@ -3,6 +3,7 @@ import numpy as np
 import beamobjects
 from beamquestions import finalbeam
 from beamquestions import supports_list
+import math
 
 """
 How does the stifness matrix work?
@@ -27,6 +28,7 @@ L = finalbeam.length # Length of the beam in meters
 S = finalbeam.supports # List of supports
 P = finalbeam.point_loads # List of point loads
 D = finalbeam.distributed_loads # List of distributed loads
+EF = finalbeam.extreme_fiber
 
 x = [0, 3, 7] # Example of the node positions used for calculations
 #Nodes will come from supports, point loads, and distributed loads. The nodes will be sorted in ascending order and duplicates will be removed.
@@ -38,15 +40,24 @@ x = [0, 3, 7] # Example of the node positions used for calculations
 
 x = []
 S_distance = []
+P_distance = []
+D_distance = []
+P_Force = []
+D_Force = []
 for i in range(len(S)):
     x.append(S[i].distance) #ex: [0, 4, 1]
     S_distance.append(S[i].distance)
+
 for i in range (len(P)):
     x.append(P[i].distance)
+    P_distance.append(P[i].distance)
+    P_Force.append(P[i].force)
 
 for i in range (len(D)):
     x.append(D[i].x_initial)
     x.append(D[i].x_final)
+    D_distance.append([D[i].x_initial, D[i].x_final])
+    D_Force.append(D[i].load_value)
 
 x = sorted(list(set(x))) #ex: [0, 1, 3, 4, 6]
 
@@ -57,8 +68,8 @@ for i in range(len(S)): #len 3
     if S[i].support_type == "fixed":
         constrained.extend([2*ind,2*ind+1]) #(v, theta)
     else:
-        constrained.extend([2*ind])
-        
+        constrained.append(2*ind)
+
 free = []
 for i in range(len(x)*2):
     if i in constrained:
@@ -66,9 +77,41 @@ for i in range(len(x)*2):
     else:
         free.append(i)
 
+#Construct the force vector
 
-#Once that is finished you have to identify which supports they are to identify their constrains (fixed: (0,0), Roller: (0,1), Pin: (0,1))
+globalvector = [0] * (2*len(x))
+for i in range(len(P)): #len 3
+    ind = x.index(P_distance[i])
+    globalvector[2*ind] = P_Force[i]
 
+for j in range(len(D)): #must be even number
+    sub_list = [pos for pos in x if D_distance[j][0] <= pos <= D_distance[j][1]]
+    w = D_Force[j]
+    if len(sub_list) > 2 and D[j].load_type in ["triangular bottom to top", "triangular top to bottom"]:
+        raise ValueError("If you are using triangular loads, it must span equal to or less than 2 elements")
+    else:
+        for i in range(len(sub_list)-1):
+            ind = [x.index(sub_list[i]), x.index(sub_list[i+1])]
+            L = sub_list[i+1] - sub_list[i]
+            if D[j].load_type == "rectangular":
+                globalvector[2*ind[0]] += w*(L/2)
+                globalvector[2*ind[0] + 1] += w*(L**2/12)
+                globalvector[2*ind[1]] += w*(L/2)
+                globalvector[2*ind[1] + 1] -= w*(L**2/12)
+            elif D[j].load_type == "triangular bottom to top":
+                theta = math.atan(w/(D_distance[j][1] - D_distance[j][0] ))
+                w_new = (sub_list[i+1] - sub_list[0]) * math.tan(theta)
+                globalvector[2*ind[0]] += (3*w_new*L) / 20
+                globalvector[2*ind[0] + 1] += (w_new*L**2) / 30
+                globalvector[2*ind[1]] += (7*w_new*L) / 20
+                globalvector[2*ind[1] + 1] -= (w_new*L**2) / 20
+            elif D[j].load_type == "triangular top to bottom":
+                theta = math.atan(w/(D_distance[j][1] - D_distance[j][0] ))
+                w_new = L * math.tan(theta)
+                globalvector[2*ind[0]] += (7*w_new*L) / 20
+                globalvector[2*ind[0] + 1] += (w_new*L**2) / 20
+                globalvector[2*ind[1]] += (3*w_new*L) / 20
+                globalvector[2*ind[1] + 1] -= (w_new*L**2) / 30
 
 
 
@@ -87,3 +130,22 @@ Global_matrix = np.zeros((2*(len(x)), 2*(len(x))))
 
 for i in range(node_elements):
     Global_matrix[2*i:2*i+ 4, 2*i:2*i + 4] += matrix_list[i]
+ 
+cut = np.ix_(free, free)
+Cut_Matrix = Global_matrix[cut]
+
+globalvector = np.array(globalvector)
+Cut_Vector = globalvector[free]
+
+solved = np.linalg.solve(Cut_Matrix, Cut_Vector)
+
+full_displacement = [0] * (len(x)*2)
+for i in range(len(free)):
+    full_displacement[free[i]] = solved[i]
+
+reaction_and_forces = Global_matrix @ full_displacement
+
+stress = (reaction_and_forces * EF)/ I
+strain = stress / E
+
+

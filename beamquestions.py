@@ -37,6 +37,7 @@ elif float(moment_of_intertia) <= 0:
 else:
     moment_of_intertia = float(moment_of_intertia)
 cross_area = float(input("Enter the cross-sectional area of the beam in m^2: "))
+extreme_fiber = float(input("Enter the distance to the extreme fiber of the beam in m^2: "))
 
 point_loads_list = []  # Initialize the point_loads_list to an empty list
 WeightofBeam = input("Is the weight of the beam negligible? Yes or No: ").lower()
@@ -102,4 +103,4 @@ if numinputs == "distributed" or numinputs == "both":
 elif numinputs == 'none':
     pass
 
-finalbeam = beamobjects.BeamFinal(beam=beaminfo, length=beamlength, Moment_of_Intertia = moment_of_intertia, cross_area = cross_area, supports=supports_list, point_loads=point_loads_list, distributed_loads=distributed_loads_list)
+finalbeam = beamobjects.BeamFinal(beam=beaminfo, length=beamlength, Moment_of_Intertia = moment_of_intertia, cross_area = cross_area, extreme_fiber = extreme_fiber, supports=supports_list, point_loads=point_loads_list, distributed_loads=distributed_loads_list)

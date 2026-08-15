@@ -85,6 +85,7 @@ class BeamFinal:
     distributed_loads: list[DistributedLoad] = field(default_factory=list)
     Moment_of_Intertia: float = float
     cross_area: float = float
+    extreme_fiber: float = float
 
 
 
