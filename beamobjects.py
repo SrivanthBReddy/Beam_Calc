@@ -59,7 +59,7 @@ class beam:
         
 @dataclass
 class SupportObj:
-    type: str
+    support_type: str
     distance: float
 
 @dataclass

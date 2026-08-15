@@ -2,7 +2,6 @@
 import numpy as np
 import beamobjects
 from beamquestions import finalbeam
-from beamquestions import supports_list
 import math
 
 """
@@ -65,7 +64,7 @@ x = sorted(list(set(x))) #ex: [0, 1, 3, 4, 6]
 constrained = []
 for i in range(len(S)): #len 3
     ind = x.index(S_distance[i])
-    if S[i].support_type == "fixed":
+    if S[i].support_type == "FIXED":
         constrained.extend([2*ind,2*ind+1]) #(v, theta)
     else:
         constrained.append(2*ind)
@@ -149,3 +148,23 @@ stress = (reaction_and_forces * EF)/ I
 strain = stress / E
 
 
+def hermite(s, L, v1, theta1, v2, theta2 ):
+    ξ = s/L
+    N1 = 1 - 3*(ξ**2) + 2*(ξ**3)
+    N2 = L*(ξ - 2*ξ**2 + ξ**3)
+    N3 = 3*ξ**2 - 2*ξ**3
+    N4 = L*(-(ξ**2) + ξ**3)
+
+    v = N1*v1 + N2*theta1 + N3*v2 + N4*theta2
+    return v
+
+
+x_vals = []
+v_points = []
+for i in range(len(x)-1):
+    L = x[i+1]-x[i]
+    for j in range(0,L*2+1):
+        s = j/2
+        v = hermite(s, L, full_displacement[2*i], full_displacement[2*i+1], full_displacement[2*i+2], full_displacement[2*i+3])
+        x_vals.append(x[i]+s)
+        v_points.append(v)
