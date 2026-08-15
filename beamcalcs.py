@@ -37,9 +37,10 @@ x = [0, 3, 7] # Example of the node positions used for calculations
 
 
 x = []
+S_distance = []
 for i in range(len(S)):
-    x.append(S[i].distance) 
-
+    x.append(S[i].distance) #ex: [0, 4, 1]
+    S_distance.append(S[i].distance)
 for i in range (len(P)):
     x.append(P[i].distance)
 
@@ -47,7 +48,27 @@ for i in range (len(D)):
     x.append(D[i].x_initial)
     x.append(D[i].x_final)
 
-x = sorted(list(set(x)))
+x = sorted(list(set(x))) #ex: [0, 1, 3, 4, 6]
+
+#Now match the support distances to the actual list of x distances
+constrained = []
+for i in range(len(S)): #len 3
+    ind = x.index(S_distance[i])
+    if S[i].support_type == "fixed":
+        constrained.extend([2*ind,2*ind+1]) #(v, theta)
+    else:
+        constrained.extend([2*ind])
+        
+free = []
+for i in range(len(x)*2):
+    if i in constrained:
+        pass
+    else:
+        free.append(i)
+
+
+#Once that is finished you have to identify which supports they are to identify their constrains (fixed: (0,0), Roller: (0,1), Pin: (0,1))
+
 
 
 
