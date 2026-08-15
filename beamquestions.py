@@ -102,4 +102,4 @@ if numinputs == "distributed" or numinputs == "both":
 elif numinputs == 'none':
     pass
 
-finalbeam = beamobjects.BeamFinal(beam=beaminfo, length=beamlength, Moment_of_Intertia = moment_of_intertia, cross_area = cross_area,supports=supports_list, point_loads=point_loads_list, distributed_loads=distributed_loads_list)
+finalbeam = beamobjects.BeamFinal(beam=beaminfo, length=beamlength, Moment_of_Intertia = moment_of_intertia, cross_area = cross_area, supports=supports_list, point_loads=point_loads_list, distributed_loads=distributed_loads_list)
