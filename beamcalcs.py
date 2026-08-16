@@ -144,8 +144,6 @@ for i in range(len(free)):
 
 reaction_and_forces = Global_matrix @ full_displacement
 
-stress = (reaction_and_forces * EF)/ I
-strain = stress / E
 
 
 def hermite(s, L, v1, theta1, v2, theta2 ):
@@ -158,13 +156,47 @@ def hermite(s, L, v1, theta1, v2, theta2 ):
     v = N1*v1 + N2*theta1 + N3*v2 + N4*theta2
     return v
 
+def hermiteM(s, L, v1, theta1, v2, theta2 ):
+    ξ = s/L
+    N1 = -6 + 12*(ξ)
+    N2 = L*(- 4 + 6*ξ)
+    N3 = 6 - 12*ξ
+    N4 = L*(-2 + 6*ξ)
+
+    Mom = (E*I)/(L**2)* (N1*v1 + N2*theta1 + N3*v2 + N4*theta2)
+    return Mom
 
 x_vals = []
 v_points = []
+m_vals = []
 for i in range(len(x)-1):
     L = x[i+1]-x[i]
     for j in range(0,L*2+1):
         s = j/2
         v = hermite(s, L, full_displacement[2*i], full_displacement[2*i+1], full_displacement[2*i+2], full_displacement[2*i+3])
+        Mom = hermiteM(s, L, full_displacement[2*i], full_displacement[2*i+1], full_displacement[2*i+2], full_displacement[2*i+3])
         x_vals.append(x[i]+s)
         v_points.append(v)
+        m_vals.append(Mom)
+
+
+
+m_vals = np.array(m_vals)
+stress = (m_vals * EF)/ I
+strain = stress / E
+
+#Max Displacement
+MaxDisplace = np.max(np.abs(v_points))
+MaxDisplacePosition = x_vals[np.argmax(np.abs(v_points))]
+
+#Max Moment
+MaxMoment = np.max(np.abs(m_vals))
+MaxMomentPosition = x_vals[np.argmax(np.abs(m_vals))]
+
+#Max Stress
+MaxStress = np.max(np.abs(stress))
+MaxStressPosition = x_vals[np.argmax(np.abs(stress))]
+
+#Max Strain
+MaxStrain = np.max(np.abs(strain))
+MaxStrainPosition = x_vals[np.argmax(np.abs(strain))]
