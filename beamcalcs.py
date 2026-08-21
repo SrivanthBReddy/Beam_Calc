@@ -16,10 +16,6 @@ The elemnts in your calculation is going to be N-1 with
 #A roller contrains only the force in the direction of the roller vertical movement (0, 1)
 #A pin contrains force in both directions but allows rotation (0,1)
 
-E = 200* 10**9 #PA
-I = 1*10**-4 #m^4 
-L = 7 #m
-P = -1000 #N
 
 E = finalbeam.beam.youngs_modulus # Youngs modulus of the beam in Pascals
 I = finalbeam.Moment_of_Intertia # Moment of Inertia of the beam in m^4
@@ -29,7 +25,6 @@ P = finalbeam.point_loads # List of point loads
 D = finalbeam.distributed_loads # List of distributed loads
 EF = finalbeam.extreme_fiber
 
-x = [0, 3, 7] # Example of the node positions used for calculations
 #Nodes will come from supports, point loads, and distributed loads. The nodes will be sorted in ascending order and duplicates will be removed.
 
 #Iterate through each list of supports ands loads and add the distances associated with each load 2, 2, 3 - 4
@@ -162,15 +157,24 @@ def hermiteM(s, L, v1, theta1, v2, theta2 ):
     N2 = L*(- 4 + 6*ξ)
     N3 = 6 - 12*ξ
     N4 = L*(-2 + 6*ξ)
-
     Mom = (E*I)/(L**2)* (N1*v1 + N2*theta1 + N3*v2 + N4*theta2)
     return Mom
+def hermiteV(L, v1, theta1, v2, theta2):
+    N1 = 12
+    N2 = L*6
+    N3 = -12
+    N4 = L*6
+    Shear = (E*I)/(L**3)* (N1*v1 + N2*theta1 + N3*v2 + N4*theta2)
+    return Shear
 
 x_vals = []
 v_points = []
 m_vals = []
+shear_vals = []
 for i in range(len(x)-1):
     L = x[i+1]-x[i]
+    Shear = hermiteV(L, full_displacement[2*i], full_displacement[2*i+1], full_displacement[2*i+2], full_displacement[2*i+3])
+    shear_vals.append(Shear)
     for j in range(0,L*2+1):
         s = j/2
         v = hermite(s, L, full_displacement[2*i], full_displacement[2*i+1], full_displacement[2*i+2], full_displacement[2*i+3])
@@ -178,8 +182,6 @@ for i in range(len(x)-1):
         x_vals.append(x[i]+s)
         v_points.append(v)
         m_vals.append(Mom)
-
-
 
 m_vals = np.array(m_vals)
 stress = (m_vals * EF)/ I
@@ -200,3 +202,5 @@ MaxStressPosition = x_vals[np.argmax(np.abs(stress))]
 #Max Strain
 MaxStrain = np.max(np.abs(strain))
 MaxStrainPosition = x_vals[np.argmax(np.abs(strain))]
+
+finalfinalbeam = beamobjects.BeamFinalValues(Md = MaxDisplace, Mdp = MaxDisplacePosition, Mm = MaxMoment, Mmp = MaxMomentPosition, Mstress = MaxStress, Mstressp = MaxStressPosition, Mstrain = MaxStrain, Mstrainp = MaxStrainPosition, x_vals = x_vals, v_points = v_points, m_vals = m_vals, stress = stress, strain = strain, shear = shear_vals, reactforces = reaction_and_forces, fulldisplacement= full_displacement, globalmatrix = Global_matrix )

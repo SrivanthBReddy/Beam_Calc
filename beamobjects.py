@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 from dataclasses import field
+import numpy as np
 
 #Wood
 class Wood(Enum):
@@ -87,6 +88,25 @@ class BeamFinal:
     cross_area: float = float
     extreme_fiber: float = float
 
+@dataclass
+class BeamFinalValues:
+    Md: float
+    Mdp: float
+    Mm: float
+    Mmp: float
+    Mstress: float
+    Mstressp: float
+    Mstrain: float
+    Mstrainp: float
+    x_vals: list[float]
+    v_points: list[float]
+    m_vals : list[float]
+    stress: list[float]
+    strain: list[float]
+    shear: list[float]
+    reactforces: np.ndarray
+    fulldisplacement: np.ndarray
+    globalmatrix: np.ndarray
 
 
 
