@@ -2,6 +2,10 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"name": "Football Sim",
+			"path": "../../OneDrive/Documents/PlatformIO/Projects/Football Sim"
 		}
 	]
 }
