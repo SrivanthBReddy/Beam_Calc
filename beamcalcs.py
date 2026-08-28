@@ -174,7 +174,6 @@ shear_vals = []
 for i in range(len(x)-1):
     L = x[i+1]-x[i]
     Shear = hermiteV(L, full_displacement[2*i], full_displacement[2*i+1], full_displacement[2*i+2], full_displacement[2*i+3])
-    shear_vals.append(Shear)
     for j in range(0,L*2+1):
         s = j/2
         v = hermite(s, L, full_displacement[2*i], full_displacement[2*i+1], full_displacement[2*i+2], full_displacement[2*i+3])
@@ -182,6 +181,7 @@ for i in range(len(x)-1):
         x_vals.append(x[i]+s)
         v_points.append(v)
         m_vals.append(Mom)
+        shear_vals.append(Shear)
 
 m_vals = np.array(m_vals)
 stress = (m_vals * EF)/ I
